@@ -11,8 +11,8 @@ from numpy.lib.stride_tricks import as_strided
 from warnings import filterwarnings
 import warnings
 from Params import Params
-from types import IntType,LongType,FloatType,StringType
-NumType = (IntType,LongType,FloatType)
+# from types import IntType,LongType,FloatType,StringType
+NumType = (int,int,float)
 
 # Small number
 eps = spacing(1.)
@@ -37,7 +37,7 @@ def normStim(stim,pixelNorm=True):
         stimAve,stimStDev = pixelNorm
 
         # Convert number to numpy array
-        if isinstance(stimAve,int) or isinstance(stimAve,long) or isinstance(stimAve,float):
+        if isinstance(stimAve,int) or isinstance(stimAve,float):
             stimAve = array(stimAve)
         # Otherwise, make sure input is in a compatible shape
         elif isinstance(stimAve,ndarray):
@@ -69,7 +69,7 @@ def normStim(stim,pixelNorm=True):
 
 # Check if x is an integer
 def IntCheck(x):
-    if isinstance(x,IntType):
+    if isinstance(x,int):
         return x
     else:
         assert x == int(x)
@@ -138,7 +138,7 @@ def gradSP(Y, # Observed response
 
     ndim = v1.ndim
 
-    x1 = a1+tdot(v1,S,2*(range(ndim),))+(tdot(J1,S,2*(range(ndim),))*S).sum(tuple(range(ndim)))
+    x1 = a1+tdot(v1,S,2*(list(range(ndim)),))+(tdot(J1,S,2*(list(range(ndim)),))*S).sum(tuple(range(ndim)))
     r1 = f1(x1)
     dr1 = df1(x1)
     x2 = a2+(r1*v2).sum()
@@ -152,8 +152,8 @@ def gradSP(Y, # Observed response
     dv2 = dy*dr2*r1
 
     da1 = dy*dr2*(dr1*v2).sum()
-    dv1 = dy*dr2*tdot(dr1*S,v2,(range(-ndim,0),range(ndim)))
-    dJ1 = dy*dr2*tdot(dr1*S*S.reshape(S.shape[:ndim]+ndim*(1,)+S.shape[ndim:]),v2,(range(-ndim,0),range(ndim)))
+    dv1 = dy*dr2*tdot(dr1*S,v2,(list(range(-ndim,0)),list(range(ndim))))
+    dJ1 = dy*dr2*tdot(dr1*S*S.reshape(S.shape[:ndim]+ndim*(1,)+S.shape[ndim:]),v2,(list(range(-ndim,0)),list(range(ndim))))
 
     return Params([da1,dv1,dJ1,da2,dv2,dd])
 
@@ -174,7 +174,7 @@ def gradLinearSP(Y, # Observed response
 
     ndim = v1.ndim
 
-    x1 = a1+tdot(v1,S,2*(range(ndim),))
+    x1 = a1+tdot(v1,S,2*(list(range(ndim)),))
     r1 = f1(x1)
     dr1 = df1(x1)
     x2 = a2+(r1*v2).sum()
@@ -188,7 +188,7 @@ def gradLinearSP(Y, # Observed response
     dv2 = dy*dr2*r1
 
     da1 = dy*dr2*(dr1*v2).sum()
-    dv1 = dy*dr2*tdot(dr1*S,v2,(range(-ndim,0),range(ndim)))
+    dv1 = dy*dr2*tdot(dr1*S,v2,(list(range(-ndim,0)),list(range(ndim))))
 
     return Params([da1,dv1,da2,dv2,dd])
 
@@ -209,7 +209,7 @@ def gradLog2(Y, # Observed response
 
     ndim = v1.ndim
 
-    x1 = a1+tdot(v1,S,2*(range(ndim),))+(tdot(J1,S,2*(range(ndim),))*S).sum(tuple(range(ndim)))
+    x1 = a1+tdot(v1,S,2*(list(range(ndim)),))+(tdot(J1,S,2*(list(range(ndim)),))*S).sum(tuple(range(ndim)))
     r1 = f1(x1)
     dr1 = df1(x1)
     x2 = a2+(r1*v2).sum()
@@ -223,8 +223,8 @@ def gradLog2(Y, # Observed response
     dv2 = dy*dr2*r1
 
     da1 = dy*dr2*(dr1*v2).sum()
-    dv1 = dy*dr2*tdot(dr1*S,v2,(range(-ndim,0),range(ndim)))
-    dJ1 = dy*dr2*tdot(dr1*S*S.reshape(S.shape[:ndim]+ndim*(1,)+S.shape[ndim:]),v2,(range(-ndim,0),range(ndim)))
+    dv1 = dy*dr2*tdot(dr1*S,v2,(list(range(-ndim,0)),list(range(ndim))))
+    dJ1 = dy*dr2*tdot(dr1*S*S.reshape(S.shape[:ndim]+ndim*(1,)+S.shape[ndim:]),v2,(list(range(-ndim,0)),list(range(ndim))))
 
     return Params([da1,dv1,dJ1,da2,dv2,dd])
 
@@ -245,7 +245,7 @@ def gradLinearLog2(Y, # Observed response
 
     ndim = v1.ndim
 
-    x1 = a1+tdot(v1,S,2*(range(ndim),))
+    x1 = a1+tdot(v1,S,2*(list(range(ndim)),))
     r1 = f1(x1)
     dr1 = df1(x1)
     x2 = a2+(r1*v2).sum()
@@ -259,7 +259,7 @@ def gradLinearLog2(Y, # Observed response
     dv2 = dy*dr2*r1
 
     da1 = dy*dr2*(dr1*v2).sum()
-    dv1 = dy*dr2*tdot(dr1*S,v2,(range(-ndim,0),range(ndim)))
+    dv1 = dy*dr2*tdot(dr1*S,v2,(list(range(-ndim,0)),list(range(ndim))))
 
     return Params([da1,dv1,da2,dv2,dd])
 
@@ -280,7 +280,7 @@ def respSP(S,P):
     ndim = v1.ndim
 
     # Calculate first layer responses
-    r1 = f1(a1+tdot(v1,S,2*(range(ndim),))+(tdot(J,S,2*(range(ndim),))*S).sum(tuple(range(ndim))))
+    r1 = f1(a1+tdot(v1,S,2*(list(range(ndim)),))+(tdot(J,S,2*(list(range(ndim)),))*S).sum(tuple(range(ndim))))
 
     # Calculate second layer responses
     r2 = f2(a2+(r1*v2).sum())
@@ -304,7 +304,7 @@ def respLinearSP(S,P):
     ndim = v1.ndim
 
     # Calculate first layer responses
-    r1 = f1(a1+tdot(v1,S,2*(range(ndim),)))
+    r1 = f1(a1+tdot(v1,S,2*(list(range(ndim)),)))
 
     # Calculate second layer responses
     r2 = f2(a2+(r1*v2).sum())
@@ -328,7 +328,7 @@ def respLog2(S,P):
     ndim = v1.ndim
 
     # Calculate first layer responses
-    r1 = f1(a1+tdot(v1,S,2*(range(ndim),))+(tdot(J,S,2*(range(ndim),))*S).sum(tuple(range(ndim))))
+    r1 = f1(a1+tdot(v1,S,2*(list(range(ndim)),))+(tdot(J,S,2*(list(range(ndim)),))*S).sum(tuple(range(ndim))))
 
     # Calculate second layer responses
     r2 = f2(a2+(r1*v2).sum())
@@ -352,7 +352,7 @@ def respLinearLog2(S,P):
     ndim = v1.ndim
 
     # Calculate first layer responses
-    r1 = f1(a1+tdot(v1,S,2*(range(ndim),)))
+    r1 = f1(a1+tdot(v1,S,2*(list(range(ndim)),)))
 
     # Calculate second layer responses
     r2 = f2(a2+(r1*v2).sum())
@@ -499,27 +499,27 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
                 LRType='DecayRate',LRParams = {}):
 
 
-    assert isinstance(prefix,StringType)
-    print 'Prefix ' + prefix
+    assert isinstance(prefix,str)
+    print('Prefix ' + prefix)
 
     Njack = IntCheck(Njack)
     jack = IntCheck(jack)
     assert jack > 0 and jack <= Njack
-    print 'Jack ',jack,'out of ',Njack
+    print('Jack ',jack,'out of ',Njack)
 
     FSIZE = stim.shape[:-1]+(nlags,)
-    print 'Full frame size ',FSIZE
+    print('Full frame size ',FSIZE)
     assert isinstance(fsize,tuple)
     if len(fsize) < len(FSIZE):
         fsize = fsize + (len(FSIZE)-len(fsize))*(1,)
-    print 'Patch frame size ',fsize
+    print('Patch frame size ',fsize)
     gsize = tuple([F-f+1 for F,f in zip(FSIZE,fsize)])
     NGRID = prod(gsize)
     ng = len(gsize)
-    print 'Grid size ',gsize
+    print('Grid size ',gsize)
 
-    assert model in ['softplus','linearSoftplu','logistic','linearLogistic']
-    print 'Model ',model
+    assert model in ['softplus','linearSoftplus','logistic','linearLogistic']
+    print('Model ',model)
     if model == 'softplus':
         resp = respSP
         grad = gradSP
@@ -542,21 +542,21 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
         AlgTag = '_LinearLogistic'
 
     extrapSteps = IntCheck(extrapSteps)
-    print 'Steps used to estimate error slipe ',extrapSteps
+    print('Steps used to estimate error slipe ',extrapSteps)
 
     if pixelNorm:
-        print 'Normalizing by pixel statistics'
+        print('Normalizing by pixel statistics')
     else:
-        print 'Normalizing by global statistics'
+        print('Normalizing by global statistics')
 
     if filepath in [None,'','./']:
         filepath=''
-        print 'Saving output in current directory'
+        print('Saving output in current directory')
     else:
         assert isinstance(filepath,StringType)
         filepath = expanduser(filepath)
         assert isdir(filepath)
-        print 'Saving output files to ',filepath
+        print('Saving output files to ',filepath)
 
     assert isinstance(start,list) or isinstance(start,tuple) or isinstance(start,str) or isinstance(start,Params)
     if isinstance(start,str):
@@ -564,43 +564,43 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
         assert bstart in ['rand','sta','uniform']
         assert vstart in ['rand','stim','sta']
         if bstart == 'rand':
-            print 'Initializing second layer randomly'
+            print('Initializing second layer randomly')
         elif bstart == 'unifrom':
-            print 'Initializing second layer uniformly'
+            print('Initializing second layer uniformly')
         elif bstart == 'sta':
-            print 'Initializing second layer using STA'
+            print('Initializing second layer using STA')
         if vstart == 'rand':
-            print 'Initializing first layer randomly'
+            print('Initializing first layer randomly')
         elif vstart == 'stim':
-            print 'Initializing first layer using random stimuli'
+            print('Initializing first layer using random stimuli')
         elif vstart == 'sta':
-            print 'Initializing first layer using STA'
+            print('Initializing first layer using STA')
     else:
-        print 'Starting parameters given'
+        print('Starting parameters given')
 
     if maxIts is None:
         maxIts = inf
-        print 'No limit on iterations'
+        print('No limit on iterations')
     else:
         maxIts = IntCheck(maxIts)
-        print 'Max iterations ',maxIts
+        print('Max iterations ',maxIts)
 
     genesis = time()
     if maxHours is None:
-        print 'No limit on runtime'
+        print('No limit on runtime')
         eschaton = inf
     else:
         assert isinstance(maxHours,NumType)
         eschaton = genesis + maxHours*3600
-        print 'Max hours ',maxHours
+        print('Max hours ',maxHours)
 
     if isinstance(perm,ndarray):
-        print 'Permuting data by given array before division'
+        print('Permuting data by given array before division')
     else:
         if perm:
-            print 'Randomly divided data sets'
+            print('Randomly divided data sets')
         else:
-            print 'Contiguous data sets'
+            print('Contiguous data sets')
 
     # Get stimulus shape and size
     Ntrials = stim.shape[-1]-nlags+1
@@ -694,7 +694,7 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
             errTrain = fromfile(f)[-1]
     else:
         if exists(trainBestName) and not overwrite:
-            print 'Output files exist'
+            print('Output files exist')
             return
         else:
             # If start is a Params object, copy it
@@ -724,13 +724,13 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
                     v = zeros(fsize)
                     for j in pr:
                         r = RS.randn(NGRID).reshape(gsize)
-                        v += tdot(S[j,...],r,(range(-ng,0),range(ng)))
+                        v += tdot(S[j,...],r,(list(range(-ng,0)),list(range(ng))))
                     v /= norm(v)
                     if model in ['softplus','logistic']:
                         J = zeros(2*fsize)
                         for j in pr:
                             r = RS.randn(NGRID).reshape(gsize)
-                            J += tdot(S[j,...],S[j,...]*r,(range(-ng,0),range(-ng,0)))
+                            J += tdot(S[j,...],S[j,...]*r,(list(range(-ng,0)),list(range(-ng,0))))
                         J /= norm(J)
 
                 # Initialize first layer using STA/STC
@@ -784,8 +784,8 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
                     ES = zeros(gsize)
                     ESY = zeros(gsize)
                     for pp in pr:
-                        xv = tdot(S[pp,...],v,2*(range(4),))
-                        xJ = (tdot(J,S[pp,...],2*(range(4),))*S[pp,...]).sum(0).sum(0).sum(0).sum(0)
+                        xv = tdot(S[pp,...],v,2*(list(range(4)),))
+                        xJ = (tdot(J,S[pp,...],2*(list(range(4)),))*S[pp,...]).sum(0).sum(0).sum(0).sum(0)
                         r1 = logistic(xv+xJ)
                         ES += r1
                         ESY += r1*Y[pp]
@@ -843,13 +843,13 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
     slope = -1.
 
     # Print status
-    print '%u Values:' % (its,),
+    print('%u Values:' % (its,), end=' ')
     for nam,p in zip(Pname,P):
         if p.size == 1:
-            print ' %s %.3e' % (nam,p),
+            print(' %s %.3e' % (nam,p), end=' ')
         else:
-            print ' %s %.3e' % (nam,norm(p)),
-    print ''
+            print(' %s %.3e' % (nam,norm(p)), end=' ')
+    print('')
 
     errTrainLast = errTrain.copy()
     PLast = P.copy()
@@ -919,7 +919,7 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
 
                 # Output note of improvement
                 errDown = errValidMin - errValid
-                print '%u: New validation minimum %.5g, down %.3g' %(its,errValidMin,errDown)
+                print('%u: New validation minimum %.5g, down %.3g' %(its,errValidMin,errDown))
 
             # Save current status
             with open(statusName,'w') as f:
@@ -927,17 +927,17 @@ def gradDescent(prefix,spikes,stim,jack,fsize,extrapSteps=10,
                 errValidMin.tofile(f)
 
             # Print status
-            print '%u Values:' % (its,),
+            print('%u Values:' % (its,), end=' ')
             for nam,p in zip(Pname,P):
                 if p.size == 1:
-                    print ' %s %.3e' % (nam,p),
+                    print(' %s %.3e' % (nam,p), end=' ')
                 else:
-                    print ' %s %.3e' % (nam,norm(p)),
-            print ''
-            print 'Slope %.3e' % (slope,)
+                    print(' %s %.3e' % (nam,norm(p)), end=' ')
+            print('')
+            print('Slope %.3e' % (slope,))
         else:
-            print 'Training error increased: learning rate too high'
-            print 'New learning rate %.3e' % LR.lrate
+            print('Training error increased: learning rate too high')
+            print('New learning rate %.3e' % LR.lrate)
             its -= 1
             P = PLast.copy()
 
