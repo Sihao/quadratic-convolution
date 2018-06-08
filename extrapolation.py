@@ -70,9 +70,9 @@ class Extrap(object):
         try:
             p = p[:N]
         except TypeError:
-            print 'Type Error in Extrap.TrialFrac.'
-            print type(N)
-            print N
+            print('Type Error in Extrap.TrialFrac.')
+            print(type(N))
+            print(N)
             p = p[:int(N)]
 
         a = ones(self.Y.size,dtype=bool)

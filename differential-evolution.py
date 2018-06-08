@@ -262,7 +262,7 @@ class DETrainer(object):
             self.DEP = self.DEP.merge()
             e1 = self.DEP.error.mean()
             if verbose:
-                print its,e1
+                print(its,e1)
             if saveFile is not None:
                 with open(saveFile,'w') as f:
                     dump(self,f)
